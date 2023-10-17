@@ -3,11 +3,12 @@ from rich import print
 from rich.prompt import Prompt
 import subprocess
 
-from llms import translateLlama
+from llms import translateLlama, translateGPT4
 
 
 def translateCommand(description, previous=[]):
-    return translateLlama(description)
+    # return translateLlama(description)
+    return translateGPT4(description, previous)
 
 
 def proposeCommand(command):
