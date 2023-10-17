@@ -1,10 +1,10 @@
 import os
 from llama_cpp import Llama
-from langchain.llms.openai import OpenAI, AzureOpenAI
-
+from langchain.llms.openai import OpenAI
 from rich.prompt import Prompt
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+import openai
 
 
 def getEnvOrPrompt(var, prompt):
@@ -22,11 +22,11 @@ def getOpenAIInfo():
 
 def getAzureOpenAIInfo():
     return {
-        "deployment_name" : getEnvOrPrompt("AZURE_OPENAI_DEPLOYMENT", "Azure OpenAI Deployment"),
-        "openai_api_key" : getEnvOrPrompt("AZURE_OPENAI_API_KEY", "Azure OpenAI API Key"),
-        "openai_api_base" : getEnvOrPrompt("AZURE_OPENAI_API_BASE", "Azure OpenAI API Base"),
-        "openai_api_type" : 'azure',
-        "openai_api_version": getEnvOrPrompt("AZURE_OPENAI_API_VERSION", "Azure OpenAI API Version"),
+        "engine" : getEnvOrPrompt("AZURE_OPENAI_DEPLOYMENT", "Azure OpenAI Deployment"),
+        "OPENAI_API_KEY" : getEnvOrPrompt("AZURE_OPENAI_API_KEY", "Azure OpenAI API Key"),
+        "OPENAI_API_BASE" : getEnvOrPrompt("AZURE_OPENAI_API_BASE", "Azure OpenAI API Base"),
+        "OPENAI_API_TYPE" : 'azure',
+        "OPENAI_API_VERSION": getEnvOrPrompt("AZURE_OPENAI_API_VERSION", "Azure OpenAI API Version"),
     }
 
 
@@ -58,14 +58,16 @@ Only include the exact command(s) in your output without quotes or backticks.
 
 def translateAzure(description, previous=[]):
     info = getAzureOpenAIInfo()
-    llm = AzureOpenAI(**info, verbose=False)
 
-    template = """Rewrite '{description}' as a bash oneliner.
+    template = f"""Rewrite '{description}' as a bash oneliner.
 Only include the exact command(s) in your output without quotes or backticks.
 """
-
-    prompt = PromptTemplate(template=template, input_variables=["description"])
-    llm_chain = LLMChain(prompt=prompt, llm=llm)
-    command = llm_chain.run(description)
-
-    return command
+    openai.api_base = info['OPENAI_API_BASE']
+    openai.api_key = info['OPENAI_API_KEY']
+    openai.api_type = 'azure'
+    openai.api_version = info['OPENAI_API_VERSION']
+    response = openai.ChatCompletion.create(
+            engine = info['engine'],
+            messages = [{"role": "system", "content": template}]
+        )
+    return response['choices'][0]['message']['content']
