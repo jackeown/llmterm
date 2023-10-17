@@ -10,7 +10,7 @@ from langchain.chains import LLMChain
 def getEnvOrPrompt(var, prompt):
     if os.environ.get(var) is None:
         ans = Prompt.ask(prompt)
-        os.environ.set(var, ans)
+        os.environ[var] =  ans
         return ans
     else:
         return os.environ.get(var)
