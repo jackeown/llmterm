@@ -10,7 +10,7 @@ from langchain.chains import LLMChain
 def getEnvOrPrompt(var, prompt):
     if os.environ.get(var) is None:
         ans = Prompt.ask(prompt)
-        os.environ.set(var, ans)
+        os.environ[var] = ans
         return ans
     else:
         return os.environ.get(var)
@@ -41,7 +41,7 @@ def translateLlama(description, previous=[]):
 
 def translateGPT4(description, previous=[]):
     getOpenAIInfo()
-    llm = OpenAI(model_name="text-davinci-003", verbose=False)
+    llm = OpenAI(model_name="gpt-3.5-turbo", verbose=False)
 
     template = """Rewrite '{description}' as a bash oneliner.
 Only include the exact command(s) in your output without quotes or backticks.
