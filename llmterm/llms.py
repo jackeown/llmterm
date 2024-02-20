@@ -1,6 +1,7 @@
 import os
 from llama_cpp import Llama
-from langchain.llms.openai import OpenAI
+# from langchain.llms.openai import OpenAI
+from langchain.chat_models import ChatOpenAI as OpenAI
 from rich.prompt import Prompt
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain

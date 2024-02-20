@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="llm-bash-helper",
-    version="0.4.1",
+    version="0.4.3",
     packages=find_packages(),
     install_requires=[
         "llama-cpp-python",
